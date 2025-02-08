@@ -518,6 +518,16 @@ const en: LocaleType = {
           SubTitle: "Example: ",
         },
       },
+      Vizier: {
+        Endpoint: {
+          Title: "Dify.ai API Endpoint",
+          SubTitle: "Custom endpoint for Dify.ai API",
+        },
+        ApiKey: {
+          Title: "Dify.ai API Key",
+          SubTitle: "API key for accessing Dify.ai",
+        },
+      },
       CustomModel: {
         Title: "Custom Models",
         SubTitle: "Custom model options, seperated by comma",
