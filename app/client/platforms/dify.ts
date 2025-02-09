@@ -65,16 +65,15 @@ export class DifyApi implements LLMApi {
         },
         body: JSON.stringify({
           query,
-          user: "user", // TODO: Add proper user ID handling
-          inputs: {}, // Required empty object for Dify API
-          response_mode: "blocking"
+          user: "user",
+          inputs: {},
+          response_mode: "streaming" // Changed from blocking to streaming mode
         }),
         signal: controller.signal
       })
 
-      const data = await response.json()
-
       if (!response.ok) {
+        const data = await response.json()
         throw new DifyError(
           data.message || 'Unknown API error',
           response.status,
@@ -82,9 +81,43 @@ export class DifyApi implements LLMApi {
         )
       }
 
-      const message = this.extractMessage(data)
-      options.onFinish(message, response)
+      let fullMessage = ""
+      const reader = response.body?.getReader()
+      if (!reader) throw new DifyError("No response body")
 
+      try {
+        while (true) {
+          const { done, value } = await reader.read()
+          if (done) break
+
+          // Convert the chunk to text
+          const chunk = new TextDecoder().decode(value)
+          try {
+            // Dify sends data: {json} format
+            const lines = chunk.split('\n')
+            for (const line of lines) {
+              if (line.startsWith('data: ')) {
+                const jsonStr = line.slice(6) // Remove 'data: ' prefix
+                if (jsonStr === '[DONE]') continue
+                
+                const data = JSON.parse(jsonStr)
+                if (data.answer) {
+                  const newText = data.answer
+                  fullMessage += newText
+                  options.onUpdate?.(fullMessage, newText)
+                }
+              }
+            }
+          } catch (e) {
+            console.warn("Failed to parse chunk", e)
+          }
+        }
+
+        // Send the final message
+        options.onFinish(fullMessage, response)
+      } finally {
+        reader.releaseLock()
+      }
     } catch (error) {
       if (error instanceof DifyError) {
         throw error
