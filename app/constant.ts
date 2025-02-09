@@ -129,7 +129,6 @@ export enum ServiceProvider {
   ChatGLM = "ChatGLM",
   DeepSeek = "DeepSeek",
   SiliconFlow = "SiliconFlow",
-  Vizier = "vizier",
 }
 
 // Google API safety settings, see https://ai.google.dev/gemini-api/docs/safety-settings
@@ -156,7 +155,6 @@ export enum ModelProvider {
   ChatGLM = "ChatGLM",
   DeepSeek = "DeepSeek",
   SiliconFlow = "SiliconFlow",
-  Vizier = "vizier", // Add Vizier provider
 }
 
 export const Stability = {
@@ -630,8 +628,6 @@ const siliconflowModels = [
   "Pro/deepseek-ai/DeepSeek-V3",
 ];
 
-const vizierModels = ["vizier-chat"]; // You can add more models if available
-
 let seq = 1000; // 内置的模型序号生成器从1000开始
 export const DEFAULT_MODELS = [
   ...openaiModels.map((name) => ({
@@ -786,17 +782,6 @@ export const DEFAULT_MODELS = [
       providerName: "SiliconFlow",
       providerType: "siliconflow",
       sorted: 14,
-    },
-  })),
-  ...vizierModels.map((name) => ({
-    name,
-    available: true,
-    sorted: seq++,
-    provider: {
-      id: "vizier",
-      providerName: "Vizier",
-      providerType: "vizier",
-      sorted: 20, // Use next available sort number
     },
   })),
 ] as const;

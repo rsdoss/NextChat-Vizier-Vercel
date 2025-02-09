@@ -24,7 +24,6 @@ import { DeepSeekApi } from "./platforms/deepseek";
 import { XAIApi } from "./platforms/xai";
 import { ChatGLMApi } from "./platforms/glm";
 import { SiliconflowApi } from "./platforms/siliconflow";
-import { VizierApi } from "./platforms/vizier";
 
 export const ROLES = ["system", "user", "assistant"] as const;
 export type MessageRole = (typeof ROLES)[number];
@@ -168,9 +167,6 @@ export class ClientApi {
         break;
       case ModelProvider.SiliconFlow:
         this.llm = new SiliconflowApi();
-        break;
-      case ModelProvider.Vizier:
-        this.llm = new VizierApi();
         break;
       default:
         this.llm = new ChatGPTApi();

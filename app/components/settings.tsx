@@ -1458,43 +1458,6 @@ export function Settings() {
     </>
   );
 
-  const vizierConfigComponent = accessStore.provider === ServiceProvider.Vizier && (
-    <>
-      <ListItem
-        title={Locale.Settings.Access.Vizier.Endpoint.Title}
-        subTitle={Locale.Settings.Access.Vizier.Endpoint.SubTitle}
-      >
-        <input
-          aria-label={Locale.Settings.Access.Vizier.Endpoint.Title}
-          type="text"
-          value={accessStore.vizierUrl}
-          placeholder="https://api.dify.ai/v1"
-          onChange={(e) =>
-            accessStore.update(
-              (access) => (access.vizierUrl = e.currentTarget.value),
-            )
-          }
-        />
-      </ListItem>
-      <ListItem
-        title={Locale.Settings.Access.Vizier.ApiKey.Title}
-        subTitle={Locale.Settings.Access.Vizier.ApiKey.SubTitle}
-      >
-        <PasswordInput
-          aria-label={Locale.Settings.Access.Vizier.ApiKey.Title}
-          value={accessStore.vizierApiKey}
-          type="text"
-          placeholder="Enter your Dify API Key"
-          onChange={(e) =>
-            accessStore.update(
-              (access) => (access.vizierApiKey = e.currentTarget.value),
-            )
-          }
-        />
-      </ListItem>
-    </>
-  );
-
   return (
     <ErrorBoundary>
       <div className="window-header" data-tauri-drag-region>
@@ -1725,7 +1688,7 @@ export function Settings() {
             subTitle={Locale.Mask.Config.CodeFold.SubTitle}
           >
             <input
-              aria-label={Locale.Settings.Access.Iflytek.ApiSecret.Title}
+              aria-label={Locale.Mask.Config.CodeFold.Title}
               type="checkbox"
               checked={config.enableCodeFold}
               data-testid="enable-code-fold-checkbox"
@@ -1848,7 +1811,6 @@ export function Settings() {
                   {azureConfigComponent}
                   {googleConfigComponent}
                   {anthropicConfigComponent}
-                  {vizierConfigComponent}
                   {baiduConfigComponent}
                   {byteDanceConfigComponent}
                   {alibabaConfigComponent}

@@ -132,10 +132,6 @@ const DEFAULT_ACCESS_STATE = {
   siliconflowUrl: DEFAULT_SILICONFLOW_URL,
   siliconflowApiKey: "",
 
-  // vizier/dify.ai defaults
-  vizierUrl: "https://api.dify.ai/v1",
-  vizierApiKey: "",
-
   // server config
   needCode: true,
   hideUserApiKey: false,
@@ -223,10 +219,6 @@ export const useAccessStore = createPersistStore(
       return ensure(get(), ["siliconflowApiKey"]);
     },
 
-    isValidVizier() {
-      return ensure(get(), ["vizierApiKey"]);
-    },
-
     isAuthorized() {
       this.fetch();
 
@@ -246,7 +238,6 @@ export const useAccessStore = createPersistStore(
         this.isValidXAI() ||
         this.isValidChatGLM() ||
         this.isValidSiliconFlow() ||
-        this.isValidVizier() ||
         !this.enabledAccessControl() ||
         (this.enabledAccessControl() && ensure(get(), ["accessCode"]))
       );
