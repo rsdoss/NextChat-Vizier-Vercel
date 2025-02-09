@@ -66,6 +66,7 @@ export async function sendChatMessage(request: DifyChatRequest): Promise<DifyCha
     if (error instanceof DifyError) {
       throw error
     }
-    throw new DifyError(`Failed to send chat message: ${error.message}`)
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    throw new DifyError(`Failed to send chat message: ${errorMessage}`)
   }
 }
