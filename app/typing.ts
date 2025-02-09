@@ -22,3 +22,7 @@ export type ModelSize =
   | "1152x864"
   | "1440x720"
   | "720x1440";
+
+// Add type aliases for Dify integration
+import type { DifyChatRequest as ChatRequest, DifyChatResponse as ChatResponse } from "./client/platforms/dify";
+export type { ChatRequest, ChatResponse };
