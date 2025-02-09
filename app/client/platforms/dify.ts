@@ -66,6 +66,7 @@ export class DifyApi implements LLMApi {
         body: JSON.stringify({
           query,
           user: "user", // TODO: Add proper user ID handling
+          inputs: {}, // Required empty object for Dify API
           response_mode: "blocking"
         }),
         signal: controller.signal
