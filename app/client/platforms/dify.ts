@@ -37,6 +37,8 @@ export class DifyError extends Error {
 }
 
 export class DifyApi implements LLMApi {
+  private conversationId?: string;
+
   path(path: string): string {
     return `${DifyConfig.baseUrl}${path}`
   }
@@ -46,6 +48,12 @@ export class DifyApi implements LLMApi {
   }
 
   async chat(options: ChatOptions) {
+    // Reset conversation if this is the first message
+    if (options.messages.length === 1) {
+      this.conversationId = undefined;
+    }
+    
+    // Get user message
     const lastMessage = options.messages[options.messages.length - 1]
     const query = getMessageTextContent(lastMessage)
 
@@ -67,7 +75,8 @@ export class DifyApi implements LLMApi {
           query,
           user: "user",
           inputs: {},
-          response_mode: "streaming" // Changed from blocking to streaming mode
+          conversation_id: this.conversationId,
+          response_mode: "streaming"
         }),
         signal: controller.signal
       })
@@ -90,17 +99,22 @@ export class DifyApi implements LLMApi {
           const { done, value } = await reader.read()
           if (done) break
 
-          // Convert the chunk to text
           const chunk = new TextDecoder().decode(value)
           try {
-            // Dify sends data: {json} format
             const lines = chunk.split('\n')
             for (const line of lines) {
               if (line.startsWith('data: ')) {
-                const jsonStr = line.slice(6) // Remove 'data: ' prefix
+                const jsonStr = line.slice(6)
                 if (jsonStr === '[DONE]') continue
                 
                 const data = JSON.parse(jsonStr)
+                
+                // Store conversation_id for future messages
+                if (data.conversation_id && !this.conversationId) {
+                  this.conversationId = data.conversation_id;
+                  console.log("[Dify] New conversation started:", this.conversationId);
+                }
+
                 if (data.answer) {
                   const newText = data.answer
                   fullMessage += newText
@@ -113,7 +127,6 @@ export class DifyApi implements LLMApi {
           }
         }
 
-        // Send the final message
         options.onFinish(fullMessage, response)
       } finally {
         reader.releaseLock()
@@ -139,7 +152,6 @@ export class DifyApi implements LLMApi {
   }
 
   async models(): Promise<LLMModel[]> {
-    // Return an empty array since Dify doesn't expose a models list API
     return []
   }
 }
