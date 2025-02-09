@@ -30,15 +30,9 @@ const nextConfig = {
   images: {
     unoptimized: mode === "export",
   },
-  // Remove experimental features for stability
   experimental: {
-    // forceSwcTransforms: true,
+    forceSwcTransforms: true,
   },
-  // Add specific CSS handling configuration
-  sassOptions: {
-    includePaths: ['./styles'],
-  },
-  webpack5: true,
 };
 
 const CorsHeaders = [
